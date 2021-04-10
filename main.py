@@ -52,14 +52,13 @@ def get_songs():
     Get songs
     :return: songs
     """
-    song_list = write_list_from_file("songs.txt", patterns_to_avoid=["chords"])
+    song_list = write_list_from_file("songs.txt", patterns_to_avoid=["chords", "ago"])
     songs = []
-    for i in range(0, len(song_list), 2):
-        song = {"artist": song_list[i], "name": song_list[i + 1]}
+    for i in range(0, len(song_list), 1):
+        song = song_list[i]
         songs.append(song)
     return songs
 
 
 if __name__ == '__main__':
-    songs = get_songs()
-    print(random.choice(songs))
+    print(random.choice(get_songs()))
