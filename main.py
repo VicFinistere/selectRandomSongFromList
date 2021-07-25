@@ -27,7 +27,7 @@ def write_list_from_file(file, patterns_to_avoid=None):
     :param patterns_to_avoid: patterns to remove from file
     :return: list from file
     """
-    list = []
+    list_from_file = []
     with open(file, encoding="utf-8", mode="r") as file:
         content = file.readlines()
 
@@ -41,24 +41,37 @@ def write_list_from_file(file, patterns_to_avoid=None):
                 for pattern in patterns_to_avoid:
                     line = line.replace(pattern, "")
 
+            # Add the line if :
+            # - not empty
+            # - not a date
             if line != '' and not is_date(line):
-                list.append(line)
+                list_from_file.append(line)
 
-    return list
+    return list_from_file
 
 
-def get_songs():
+def get_list_from_file():
     """
     Get songs
     :return: songs
     """
-    song_list = write_list_from_file("songs.txt", patterns_to_avoid=["chords", "ago"])
-    songs = []
-    for i in range(0, len(song_list), 1):
-        song = song_list[i]
-        songs.append(song)
-    return songs
+    list_from_file = write_list_from_file("songs.txt", patterns_to_avoid=["chords", "ago"])
+    lines = []
+    for i in range(0, len(list_from_file), 1):
+        line = list_from_file[i]
+        lines.append(line)
+    return lines
 
 
 if __name__ == '__main__':
-    print(random.choice(get_songs()))
+    
+    # Name in the song list can be :
+    #  the group's 
+    #  the title 
+    name_in_song_list = random.choice(get_list_from_file())
+    
+    # Choose another line because this one is not a song title
+    while any(ele in name_in_song_list for ele in ["Official", "Chords", "Tab"]):
+        name_in_song_list = random.choice(get_list_from_file())
+
+    print("Group or Song : ", name_in_song_list)
