@@ -4,20 +4,35 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 import datetime
 import random
+import requests
+
+from dateutil.parser import parse
 
 
-def is_date(string):
+def is_date(string, fuzzy=True):
     """
-    Check if string is a date
-    :param string: the parsed string
-    :return: boolean (is a date or not)
-    """
+    Return whether the string can be interpreted as a date.
 
-    try:
-        datetime.datetime.strptime(string, '%b %d, %Y')
+    :param string: str, string to check for date
+    :param fuzzy: bool, ignore unknown tokens in string if True
+    """
+    try: 
+        parse(string, fuzzy=fuzzy)
         return True
+
     except ValueError:
         return False
+            
+def remove_unwanted_substrings_in_line(patterns_to_avoid):
+    """
+    Remove unwantes substring in line
+    :param file: parsed file
+    :param patterns_to_avoid: patterns to remove from file
+    :return: list from file
+    """
+    
+    for pattern in patterns_to_avoid:
+        line = line.replace(pattern, "")
 
 
 def write_list_from_file(file, patterns_to_avoid=None):
@@ -28,18 +43,17 @@ def write_list_from_file(file, patterns_to_avoid=None):
     :return: list from file
     """
     list_from_file = []
-    with open(file, encoding="utf-8", mode="r") as file:
+    with open(file, "r", encoding="utf-8") as file:
         content = file.readlines()
 
         for line in content:
 
-            # Remove lines
+            # Remove empty lines
             line = line.replace('\n\n', '\n').replace('\n', '')
 
-            # Remove unwanted patterns
-            if patterns_to_avoid is not None:
-                for pattern in patterns_to_avoid:
-                    line = line.replace(pattern, "")
+            # Remove unwanted substrings
+            if patterns_to_avoid:
+                line = remove_unwanted_substrings_in_line(line)
 
             # Add the line if :
             # - not empty
@@ -49,13 +63,12 @@ def write_list_from_file(file, patterns_to_avoid=None):
 
     return list_from_file
 
-
 def get_list_from_file():
     """
     Get songs
     :return: songs
     """
-    list_from_file = write_list_from_file("songs.txt", patterns_to_avoid=["chords", "ago"])
+    list_from_file = write_list_from_file("songs.txt")
     lines = []
     for i in range(0, len(list_from_file), 1):
         line = list_from_file[i]
@@ -70,8 +83,5 @@ if __name__ == '__main__':
     #  the title 
     name_in_song_list = random.choice(get_list_from_file())
     
-    # Choose another line because this one is not a song title
-    while any(ele in name_in_song_list for ele in ["Official", "Chords", "Tab"]):
-        name_in_song_list = random.choice(get_list_from_file())
-
     print("Group or Song : ", name_in_song_list)
+            
